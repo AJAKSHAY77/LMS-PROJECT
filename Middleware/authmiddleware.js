@@ -8,7 +8,7 @@ export const isLoggedIn =  async (req,res,next) => {
         return next(new AppError('unauthenticated,please login again',401))
     }
 
-    const userdetails =  await JWT.verify(token,process.env.JWT_SECRET)
+    const userdetails = await JWT.verify(token, process.env.JWT_SECRET);
     
     req.user = userdetails
     
