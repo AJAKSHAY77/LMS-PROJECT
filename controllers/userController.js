@@ -43,7 +43,7 @@ export const register = async (req, res, next) => {
     console.log(req.file);
     try {
 
-      const result =  await cloudinary.v2.uploader.upload(req.file.path, {
+      const uloadingImage =  await cloudinary.v2.uploader.upload(req.file.path, {
         folder: 'lms',
         width: 200,
         height: 200,
@@ -51,12 +51,12 @@ export const register = async (req, res, next) => {
         crop:'fill'
       
       });
-      if (result) {
-        user.avatar.public_id = result.public_id;
-        user.avatar.secure_url = result.secure_url;
+      if (uloadingImage) {
+        user.avatar.public_id = uloadingImage.public_id;
+        user.avatar.secure_url = uloadingImage.secure_url;
 
         //Remove file from local
-      fs.rm(`uploads/${req.file.filename}`) 
+        fs.rm(`uploads/${req.file.filename}`);
       }
       
     } catch (error) {
@@ -67,11 +67,12 @@ export const register = async (req, res, next) => {
   }
   await user.save();
 
-  user.password = undefined;
+  
 
   const token = await user.generateJWTTOKEN();
 
   res.cookie("token", token, cookieOptions);
+  user.password = undefined;
 
   res.status(201).json({
     success: true,
