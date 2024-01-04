@@ -1,4 +1,4 @@
-import express from "express";
+import express, { urlencoded } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
@@ -12,6 +12,7 @@ const app = express();
 
 //middleware
 app.use(express.json());
+app.use(urlencoded({extended:true}))
 app.use(
   cors({
     origin: [process.env.FRONTEND_URL],
