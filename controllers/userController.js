@@ -147,13 +147,17 @@ export const forgotpassword = async (req, res, next) => {
     return next(new AppError("Email is not resgistered", 400));
   }
 
-  const resetToken = await user.generatePasswordResetToken();
-  // console.log(resettoken);
-  console.log(user.forgetPasswordToken);
-  await user.save();
+ const resetToken = user.generatePasswordResetToken();
+ console.log("Generated Token:", resetToken);
 
-  const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-  console.log(resetPasswordURL);
+ // Now you can use the resetToken variable
+ const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+ console.log("Reset Password URL:", resetPasswordURL);
+
+ await user.save();
+
+
+  
   const subject = "Reset password";
 
   const message = `You can reset your password by clicking <a href=${resetPasswordURL} target="_blank">Reset your password</a>\nIf the above link does not work for some reason then copy paste this link in new tab ${resetPasswordURL}.\n If you have not requested this, kindly ignore.`;
@@ -175,6 +179,7 @@ export const forgotpassword = async (req, res, next) => {
 export const resetpaassword = async(req,res,next) => {
   const { resetToken } = req.params;
   const { password } = req.body;
+  console.log(password);
 
   const forgetPasswordToken = crypto
     .createHash("sha256")
@@ -191,8 +196,9 @@ export const resetpaassword = async(req,res,next) => {
   // Checking if token matches in DB and if it is still valid(Not expired)
   const user = await User.findOne({
     forgetPasswordToken,
-   forgetPasswordExpiry:{$gt:Date.now()}
+    forgetPasswordExpiry:{ $gt: Date.now() },
   });
+  console.log(`User,${user}`);
 
   // If not found or expired send the response
   if (!user) {

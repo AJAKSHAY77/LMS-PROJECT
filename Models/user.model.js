@@ -86,7 +86,8 @@ userSchema.methods = {
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
-    this.forgetPasswordExpiry = Date.now() + 20 * 60 * 1000; //15 min from now
+    this.forgetPasswordExpiry = Date.now() + 20 * 60 * 1000; // 15 min from now
+    return this.forgetPasswordToken; // Return the generated token
   },
 };
 
