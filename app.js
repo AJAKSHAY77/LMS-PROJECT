@@ -1,10 +1,11 @@
-import express, { urlencoded } from "express";
+import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import userRouter from "./Routes/userRoutes.js";
 import erroMiddleware from "./Middleware/errorMiddleware.js";
+import courseRouter from "./Routes/course.router.js";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ const app = express();
 
 //middleware
 app.use(express.json());
-app.use(urlencoded({extended:true}))
+app.use(express.urlencoded({extended:true}))
 app.use(
   cors({
     origin: [process.env.FRONTEND_URL],
@@ -30,6 +31,7 @@ app.use("/ping", (req, res) => {
 //project_routes
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/courses",courseRouter);
 
 //Invalid Routes
 

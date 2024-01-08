@@ -1,4 +1,4 @@
-import crypto from "crypto"
+import crypto from "crypto";
 import User from "../Models/user.model.js";
 import sendEmail from "../utils/Sendemail.js";
 import AppError from "../utils/error.utils.js";
@@ -147,17 +147,15 @@ export const forgotpassword = async (req, res, next) => {
     return next(new AppError("Email is not resgistered", 400));
   }
 
- const resetToken = user.generatePasswordResetToken();
- console.log("Generated Token:", resetToken);
+  const resetToken = user.generatePasswordResetToken();
+  console.log("Generated Token:", resetToken);
 
- // Now you can use the resetToken variable
- const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
- console.log("Reset Password URL:", resetPasswordURL);
+  // Now you can use the resetToken variable
+  const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+  console.log("Reset Password URL:", resetPasswordURL);
 
- await user.save();
+  await user.save();
 
-
-  
   const subject = "Reset password";
 
   const message = `You can reset your password by clicking <a href=${resetPasswordURL} target="_blank">Reset your password</a>\nIf the above link does not work for some reason then copy paste this link in new tab ${resetPasswordURL}.\n If you have not requested this, kindly ignore.`;
@@ -176,11 +174,63 @@ export const forgotpassword = async (req, res, next) => {
     return next(new AppError(e.message, 500));
   }
 };
-export const resetpaassword = async(req,res,next) => {
-  const { resetToken } = req.params;
-  const { password } = req.body;
-  console.log(password);
+// export const resetpaassword = async (req, res, next) => {
 
+//   const { resetToken } = req.params;
+//   const { password } = req.body;
+//   console.log(password);
+//   console.log(resetToken);
+
+//   const forgotPasswordToken = crypto
+//     .createHash("sha256")
+//     .update(resetToken)
+//     .digest("hex");
+//   // Check if password is not there then send response saying password is required
+//   if (!password) {
+//     return next(new AppError("Password is required", 400));
+//   }
+
+//   console.log("forgetpasswordtoken ", forgotPasswordToken);
+
+//   // Checking if token matches in DB and if it is still valid(Not expired)
+//   const usero = await User.findOne({
+//     forgotPasswordToken,
+//     // forgetPasswordExpiry: { $gt: Date.now() },
+//   });
+//   console.log(`User,${usero}`);
+
+//   // If not found or expired send the response
+//   if (!usero) {
+//     return next(
+//       new AppError("Token is invalid or expired, please try again", 400)
+//     );
+//   }
+
+//   // Update the password if token is valid and not expired
+//   usero.password = password;
+
+//   // making forgotPassword* valus undefined in the DB
+//   usero.forgetPasswordToken = undefined;
+//   usero.forgetPasswordExpiry = undefined;
+
+//   // Saving the updated user values
+//   await usero.save();
+
+//   // Sending the response when everything goes good
+//   res.status(200).json({
+//     success: true,
+//     message: "Password changed successfully",
+//   });
+// };
+
+export const resetPassword = async (req, res, next) => {
+  // Extracting resetToken from req.params object
+  const { resetToken } = req.params;
+
+  // Extracting password from req.body object
+  const { password } = req.body;
+
+  // We are again hashing the resetToken using sha256 since we have stored our resetToken in DB using the same algorithm
   const forgetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
@@ -188,7 +238,7 @@ export const resetpaassword = async(req,res,next) => {
 
   // Check if password is not there then send response saying password is required
   if (!password) {
-    return next(new AppError('Password is required', 400));
+    return next(new AppError("Password is required", 400));
   }
 
   console.log(forgetPasswordToken);
@@ -196,14 +246,13 @@ export const resetpaassword = async(req,res,next) => {
   // Checking if token matches in DB and if it is still valid(Not expired)
   const user = await User.findOne({
     forgetPasswordToken,
-    forgetPasswordExpiry:{ $gt: Date.now() },
+    forgetPasswordExpiry: { $gt: Date.now() }, // $gt will help us check for greater than value, with this we can check if token is valid or expired
   });
-  console.log(`User,${user}`);
 
   // If not found or expired send the response
   if (!user) {
     return next(
-      new AppError('Token is invalid or expired, please try again', 400)
+      new AppError("Token is invalid or expired, please try again", 400)
     );
   }
 
@@ -212,7 +261,7 @@ export const resetpaassword = async(req,res,next) => {
 
   // making forgotPassword* valus undefined in the DB
   user.forgetPasswordToken = undefined;
-  user.forgetPasswordExpiry = undefined;
+  user.forgetPasswordToken = undefined;
 
   // Saving the updated user values
   await user.save();
@@ -220,15 +269,12 @@ export const resetpaassword = async(req,res,next) => {
   // Sending the response when everything goes good
   res.status(200).json({
     success: true,
-    message: 'Password changed successfully',
+    message: "Password changed successfully",
   });
-
-
-
 };
 
-export const changePassword = async (req,res,next) => {
 
+export const changePassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
   const { id } = req.user; // because of the middleware isLoggedIn
 
@@ -268,14 +314,12 @@ export const changePassword = async (req,res,next) => {
     success: true,
     message: "Password changed successfully",
   });
-  
-}
+};
 
-export const updateuser = async (req,res,next) => {
+export const updateuser = async (req, res, next) => {
   const { fullname } = req.body;
   const { id } = req.user.id;
 
-  
   const user = await User.findById(id);
 
   if (!user) {
@@ -323,4 +367,4 @@ export const updateuser = async (req,res,next) => {
     success: true,
     message: "User details updated successfully",
   });
-} 
+};

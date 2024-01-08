@@ -6,7 +6,8 @@ import {
   login,
   logout,
   register,
-  resetpaassword,
+  resetPassword,
+  
   updateuser,
 } from "../controllers/userController.js";
 import { isLoggedIn } from "../Middleware/authmiddleware.js";
@@ -19,7 +20,7 @@ userRouter.post("/login", login);
 userRouter.get("/logout", logout);
 userRouter.get("/me", isLoggedIn, getProfileDetail);
 userRouter.post("/forgetpassword", forgotpassword);
-userRouter.post("/reset-password/:resetToken", resetpaassword);
+userRouter.post("/reset-password/:resetToken", resetPassword);
 userRouter.post('/change-password', isLoggedIn, changePassword)
 userRouter.put("/update/:id", isLoggedIn, upload.single("avatar"),updateuser);
 
