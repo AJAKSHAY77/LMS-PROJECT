@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import userRouter from "./Routes/userRoutes.js";
 import erroMiddleware from "./Middleware/errorMiddleware.js";
 import courseRouter from "./Routes/course.router.js";
+import paymentRouter from "./Routes/payment.route.js";
 
 dotenv.config();
 
@@ -31,7 +32,8 @@ app.use("/ping", (req, res) => {
 //project_routes
 
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/courses",courseRouter);
+app.use("/api/v1/courses", courseRouter);
+app.use("api/v1/payment",paymentRouter)
 
 //Invalid Routes
 
